@@ -4,8 +4,8 @@ import Testing
 @testable import CmuxNextTabs
 
 /// Dogfood nxdog12: "tabs at top drag full window around". A strip in the
-/// titlebar band of a full-size-content window: pressing a tab, the + button
-/// or a trailing button must never move the window; only empty strip space
+/// titlebar band of a full-size-content window: pressing a tab or the +
+/// button must never move the window; only empty strip space
 /// does.
 ///
 /// macOS decides a titlebar drag from a region AppKit precomputes before the
@@ -18,9 +18,9 @@ import Testing
         let model: TabStripModel
         let strip: TabStripView
 
-        init(titles: [String], buttons: [TabStripButton] = TabStripButtonGroupTests.splits) {
+        init(titles: [String]) {
             let tabs = titles.enumerated().map { TabItem(id: TabID("t\($0.offset)"), title: $0.element) }
-            model = TabStripModel(tabs: tabs, selectedID: tabs.first?.id, trailingButtons: buttons)
+            model = TabStripModel(tabs: tabs, selectedID: tabs.first?.id)
             strip = TabStripView(model: model)
             window = NSWindow(contentRect: NSRect(x: -30_000, y: -30_000, width: 900, height: 400),
                               styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
