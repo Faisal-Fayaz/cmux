@@ -98,7 +98,7 @@ extension SidebarBridge {
                 if model.layout != layout { model.layout = layout }
                 let infos = Self.itemInfo(for: layout, registered: { registry.action(for: $0) != nil },
                                           shownPage: shownPage, unread: unread,
-                                          app: { Self.appInfo($0, registry: apps) }, updateBadge: update)
+                                          app: { SidebarItemInfo.app($0, registry: apps) }, updateBadge: update)
                 if model.itemInfo != infos { model.itemInfo = infos }
                 let suppressed = AppPresence(apps.apps).suppressed
                 if model.suppressedApps != suppressed { model.suppressedApps = suppressed }
@@ -137,17 +137,6 @@ extension SidebarBridge {
             }
         }
         return infos
-    }
-
-    /// How an app item draws: its name and symbol; hidden while the app is
-    /// hidden or not active (D55); dimmed when the app is not installed.
-    static func appInfo(_ id: String, registry: AppRegistry) -> SidebarItemInfo {
-        guard let app = registry.app(id) else { return SidebarItemInfo.fallback(for: .app(id)) }
-        let symbol = if case .symbol(let name)? = app.manifest.icon { name } else { "app" }
-        // A first-party app keeps its former built-in's short tile caption.
-        let caption = SidebarLayoutDocument.firstPartyApps.first { $0.value == id }?.key.caption
-        return SidebarItemInfo(title: app.manifest.name.resolved(), symbol: symbol, isMissing: !app.isInstalled,
-                               isHidden: AppPresence([app]).suppressed.contains(id), caption: caption)
     }
 
     /// A layout change from this sidebar (a drag, an inline edit): sent to
